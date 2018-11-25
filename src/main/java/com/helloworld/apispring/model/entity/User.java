@@ -23,7 +23,7 @@ public class User {
     @SequenceGenerator(name = "EquipoGenerator", sequenceName = "usuario_id_usuario_seq", allocationSize = 1)
 
     @Column(name = "ID_USUARIO")
-    private long userid;
+    private Long userid;
     
     @Column(name = "USER_NAME")
     private String username;

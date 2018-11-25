@@ -7,9 +7,8 @@ package com.helloworld.apispring.controller;
 
 import com.helloworld.apispring.dto.LoginRequest;
 import com.helloworld.apispring.dto.LoginResponse;
-import com.helloworld.apispring.model.dao.UserRepositorio;
 import com.helloworld.apispring.model.entity.User;
-import java.util.List;
+import com.helloworld.apispring.model.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,37 +16,26 @@ import org.springframework.stereotype.Service;
 public class UserServicio {
 
     @Autowired
-    private UserRepositorio userrepositorio;
+    private UserRepository userRepository;
 
     public UserServicio() {
     }
 
-    public List<User> getAll() {
-        return userrepositorio.getAll();
+    public Iterable<User> getAll() {
+        return userRepository.findAll();
     }
 
-    ;
-    
     public long createUser(User user) {
-        return userrepositorio.createUser(user);
+        return userRepository.save(user).getUserid();
     }
 
-    ;
-
-    public String updateUser(User user) {
-        if (userrepositorio.updateUser(user)) {
-            return "Se Actualizo";
-        } else {
-            return "No se pudo actualizar";
-        }
+    public void updateUser(User user) {
+        userRepository.save(user);
     }
 
-    ;
-    
-   public LoginResponse login(LoginRequest request) {
-        User user = new User();
+    public LoginResponse login(LoginRequest request) {
         LoginResponse response = new LoginResponse();
-        user = userrepositorio.getUserByUserName(request.getUserName());
+        User user = userRepository.findFirstByUsername(request.getUserName());
 
         if (user == null) {
             response.setResultado("el usuario no existe");
@@ -56,7 +44,7 @@ public class UserServicio {
                 response.setResultado("Usuario inactivo");
             } else {
                 if (request.getPassword().equals(user.getPass())) {
-                    response.setResultado("login exitoso"); 
+                    response.setResultado("login exitoso");
                 } else {
                     response.setResultado("contraseña incorrecta");
                 }
@@ -66,10 +54,8 @@ public class UserServicio {
         return response;
     }
 
-    public String deleteUser(User user) {
-        userrepositorio.deleteUser(user);
-        return "funciona";
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
-;
 
 }
